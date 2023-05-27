@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>自动获取加密货币价格</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #EEEEEE;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            font-size: 25px
+        }
+
+        .green {
+            background-color: #90ee90;
+        }
+
+        .red {
+            background-color: #ff7f7f;
+        }
+
+        .white {
+            background-color: #ffffff;
+        }
+
+        td {
+            font-size: 25px;
+        }
+    </style>
+</head>
+
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th width=100 px></th>
+                <th width=200 px>Price</th>
+                <th width=100 px>24H%</th>
+                <th width=160 px>O.D</th>
+                <th width=160 px>L.D</th>
+                <th width=160 px>H.D</th>
+                <th width=160 px>VT.D</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>BTC</td>
+                <td id="btc-price"></td>
+                <td id="btc-change"></td>
+                <td id="btc-openday"></td>
+                <td id="btc-lowday"></td>
+                <td id="btc-highday"></td>
+                <td id="btc-volatileday"></td>
+            </tr>
+            <tr>
+                <td>ETH</td>
+                <td id="eth-price"></td>
+                <td id="eth-change"></td>
+                <td id="eth-openday"></td>
+                <td id="eth-lowday"></td>
+                <td id="eth-highday"></td>
+                <td id="eth-volatileday"></td>
+            </tr>
+            <tr>
+                <td>BNB</td>
+                <td id="bnb-price"></td>
+                <td id="bnb-change"></td>
+                <td id="bnb-openday"></td>
+                <td id="bnb-lowday"></td>
+                <td id="bnb-highday"></td>
+                <td id="bnb-volatileday"></td>
+            </tr>
+            <tr>
+                <td>OKB</td>
+                <td id="okb-price"></td>
+                <td id="okb-change"></td>
+                <td id="okb-openday"></td>
+                <td id="okb-lowday"></td>
+                <td id="okb-highday"></td>
+                <td id="okb-volatileday"></td>
+            </tr>
+            <tr>
+                <td>ARB</td>
+                <td id="arb-price"></td>
+                <td id="arb-change"></td>
+                <td id="arb-openday"></td>
+                <td id="arb-lowday"></td>
+                <td id="arb-highday"></td>
+                <td id="arb-volatileday"></td>
+            </tr>
+            <tr>
+                <td>SUI</td>
+                <td id="sui-price"></td>
+                <td id="sui-change"></td>
+                <td id="sui-openday"></td>
+                <td id="sui-lowday"></td>
+                <td id="sui-highday"></td>
+                <td id="sui-volatileday"></td>
+            </tr>
+            <tr>
+                <td>MATIC</td>
+                <td id="matic-price"></td>
+                <td id="matic-change"></td>
+                <td id="matic-openday"></td>
+                <td id="matic-lowday"></td>
+                <td id="matic-highday"></td>
+                <td id="matic-volatileday"></td>
+            </tr>
+            <tr>
+                <td>APT</td>
+                <td id="apt-price"></td>
+                <td id="apt-change"></td>
+                <td id="apt-openday"></td>
+                <td id="apt-lowday"></td>
+                <td id="apt-highday"></td>
+                <td id="apt-volatileday"></td>
+            </tr>
+            <tr>
+                <td>Cake</td>
+                <td id="cake-price"></td>
+                <td id="cake-change"></td>
+                <td id="cake-openday"></td>
+                <td id="cake-lowday"></td>
+                <td id="cake-highday"></td>
+                <td id="cake-volatileday"></td>
+            </tr>
+        </tbody>
+    </table>
+    <p id="last-update" style="text-align: center;"></p>
+    <p id="now-time" style="text-align: center;"></p>
+    <script>
+        const btcPriceElement = document.getElementById('btc-price');
+        const ethPriceElement = document.getElementById('eth-price');
+        const bnbPriceElement = document.getElementById('bnb-price');
+        const okbPriceElement = document.getElementById('okb-price');
+        const arbPriceElement = document.getElementById('arb-price');
+        const suiPriceElement = document.getElementById('sui-price');
+        const maticPriceElement = document.getElementById('matic-price');
+        const aptPriceElement = document.getElementById('apt-price');
+        const cakePriceElement = document.getElementById('cake-price');
+
+        const btcChangeElement = document.getElementById('btc-change');
+        const ethChangeElement = document.getElementById('eth-change');
+        const bnbChangeElement = document.getElementById('bnb-change');
+        const okbChangeElement = document.getElementById('okb-change');
+        const arbChangeElement = document.getElementById('arb-change');
+        const suiChangeElement = document.getElementById('sui-change');
+        const maticChangeElement = document.getElementById('matic-change');
+        const aptChangeElement = document.getElementById('apt-change');
+        const cakeChangeElement = document.getElementById('cake-change');
+
+        const btcOpendayElement = document.getElementById('btc-openday');
+        const ethOpendayElement = document.getElementById('eth-openday');
+        const bnbOpendayElement = document.getElementById('bnb-openday');
+        const okbOpendayElement = document.getElementById('okb-openday');
+        const arbOpendayElement = document.getElementById('arb-openday');
+        const suiOpendayElement = document.getElementById('sui-openday');
+        const maticOpendayElement = document.getElementById('matic-openday');
+        const aptOpendayElement = document.getElementById('apt-openday');
+        const cakeOpendayElement = document.getElementById('cake-openday');
+
+        const btcLowdayElement = document.getElementById('btc-lowday');
+        const ethLowdayElement = document.getElementById('eth-lowday');
+        const bnbLowdayElement = document.getElementById('bnb-lowday');
+        const okbLowdayElement = document.getElementById('okb-lowday');
+        const arbLowdayElement = document.getElementById('arb-lowday');
+        const suiLowdayElement = document.getElementById('sui-lowday');
+        const maticLowdayElement = document.getElementById('matic-lowday');
+        const aptLowdayElement = document.getElementById('apt-lowday');
+        const cakeLowdayElement = document.getElementById('cake-lowday');
+
+        const btcHighdayElement = document.getElementById('btc-highday');
+        const ethHighdayElement = document.getElementById('eth-highday');
+        const bnbHighdayElement = document.getElementById('bnb-highday');
+        const okbHighdayElement = document.getElementById('okb-highday');
+        const arbHighdayElement = document.getElementById('arb-highday');
+        const suiHighdayElement = document.getElementById('sui-highday');
+        const maticHighdayElement = document.getElementById('matic-highday');
+        const aptHighdayElement = document.getElementById('apt-highday');
+        const cakeHighdayElement = document.getElementById('cake-highday');
+
+        const btcVolatiledayElement = document.getElementById('btc-volatileday');
+        const ethVolatiledayElement = document.getElementById('eth-volatileday');
+        const bnbVolatiledayElement = document.getElementById('bnb-volatileday');
+        const okbVolatiledayElement = document.getElementById('okb-volatileday');
+        const arbVolatiledayElement = document.getElementById('arb-volatileday');
+        const suiVolatiledayElement = document.getElementById('sui-volatileday');
+        const maticVolatiledayElement = document.getElementById('matic-volatileday');
+        const aptVolatiledayElement = document.getElementById('apt-volatileday');
+        const cakeVolatiledayElement = document.getElementById('cake-volatileday');
+
+        const lastUpdateElement = document.getElementById('last-update');
+        const nowTimeElement = document.getElementById('now-time');
+
+        let previousPrices = {
+            BTC: 0,
+            ETH: 0,
+            BNB: 0,
+            OKB: 0,
+            ARB: 0,
+            SUI: 0,
+            MATIC: 0,
+            APT: 0,
+            CAKE: 0
+        };
+
+        function getApiUrlWithNoCache() {
+            return `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC,ETH,BNB,OKB,ARB,SUI,MATIC,APT,CAKE&tsyms=USD&api_key=YOUR_API_KEY&_=${new Date().getTime()}`;
+        }
+
+        function updatePrice(element, price, crypto) {
+            element.classList.remove('green', 'red', 'white');
+
+            if (previousPrices[crypto] < price) {
+                element.classList.add('green');
+            } else if (previousPrices[crypto] > price) { //原价>现价就是跌了
+                element.classList.add('red');
+            } else if (price / previousPrices[crypto] >= 1.01) { //涨幅大于等于1%
+                playAudio();
+            } else {
+                element.classList.add('white');
+            }
+
+            previousPrices[crypto] = price;
+            element.textContent = `$${price.toFixed(3)}`;
+        }
+
+        function updateChange(element, change, crypto) {
+            element.textContent = change.toFixed(2) + '%';
+            element.classList.remove('green', 'red');
+
+            if (change > 0) {
+                element.classList.add('green');
+            } else {
+                element.classList.add('red');
+            }
+        }
+        function updateOpenday(element, openday, crypto) {
+
+            element.textContent = `$${openday.toFixed(3)}`;
+        }
+
+        function updateLowday(element, lowday, crypto) {
+
+            element.textContent = `$${lowday.toFixed(3)}`;
+        }
+
+        function updateHighday(element, highday, crypto) {
+
+            element.textContent = `$${highday.toFixed(3)}`;
+        }
+
+        function updateVolatileday(element, volatileday, crypto) {
+
+            element.textContent = `$${volatileday.toFixed(3)}`;
+        }
+        function playAudio() {
+            var audio = new Audio('UP.wav');
+            audio.play();
+        }
+        async function fetchPrices() {
+            const response = await fetch(getApiUrlWithNoCache());
+            const data = await response.json();
+
+            const cryptos = ['BTC', 'ETH', 'BNB', 'OKB', 'ARB', 'SUI', 'MATIC', 'APT', 'CAKE'];
+            const priceElements = [btcPriceElement, ethPriceElement, bnbPriceElement, okbPriceElement, arbPriceElement, suiPriceElement, maticPriceElement, aptPriceElement, cakePriceElement];
+            const changeElements = [btcChangeElement, ethChangeElement, bnbChangeElement, okbChangeElement, arbChangeElement, suiChangeElement, maticChangeElement, aptChangeElement, cakeChangeElement];
+            const opendayElements = [btcOpendayElement, ethOpendayElement, bnbOpendayElement, okbOpendayElement, arbOpendayElement, suiOpendayElement, maticOpendayElement, aptOpendayElement, cakeOpendayElement];
+            const lowdayElements = [btcLowdayElement, ethLowdayElement, bnbLowdayElement, okbLowdayElement, arbLowdayElement, suiLowdayElement, maticLowdayElement, aptLowdayElement, cakeLowdayElement];
+            const highdayElements = [btcHighdayElement, ethHighdayElement, bnbHighdayElement, okbHighdayElement, arbHighdayElement, suiHighdayElement, maticHighdayElement, aptHighdayElement, cakeHighdayElement];
+            const volatiledayElements = [btcVolatiledayElement, ethVolatiledayElement, bnbVolatiledayElement, okbVolatiledayElement, arbVolatiledayElement, suiVolatiledayElement, maticVolatiledayElement, aptVolatiledayElement, cakeVolatiledayElement];
+            cryptos.forEach((crypto, index) => {
+                const price = data['RAW'][crypto]['USD']['PRICE'];
+                const change24h = data['RAW'][crypto]['USD']['CHANGEPCT24HOUR'];
+                const openday = data['RAW'][crypto]['USD']['OPENDAY'];
+                const lowday = data['RAW'][crypto]['USD']['LOWDAY'];
+                const highday = data['RAW'][crypto]['USD']['HIGHDAY'];
+                let volatileday = highday - lowday;
+
+                updatePrice(priceElements[index], price, crypto);
+                updateChange(changeElements[index], change24h, crypto);
+                updateOpenday(opendayElements[index], openday, crypto);
+                updateLowday(lowdayElements[index], lowday, crypto);
+                updateHighday(highdayElements[index], highday, crypto);
+                updateVolatileday(volatiledayElements[index], volatileday, crypto);
+            });
+
+            const currentTime = new Date();
+            lastUpdateElement.textContent = `更新时间：${currentTime.toLocaleString()}`;
+        }
+        async function nowtime() {
+            const currentTime = new Date()
+            nowTimeElement.textContent = `现在时间：${currentTime.toLocaleString()}`;
+        }
+
+        fetchPrices();
+        nowtime();
+        setInterval(fetchPrices, 15000);
+        setInterval(nowtime, 1000);
+    </script>
+</body>
+
+</html>
